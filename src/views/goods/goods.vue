@@ -336,7 +336,6 @@
                     id: '',
                     sales: 0
                 };
-                // self.files = [];
                 if (self.$refs.upload) {
                     self.$refs.upload.clearFiles();
                 }

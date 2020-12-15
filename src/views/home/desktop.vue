@@ -21,7 +21,8 @@
       </el-table-column>
       <el-table-column label="操作" width="300px">
         <template slot-scope="scope">
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDel(scope.$index, scope.row)"></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDel(scope.$index, scope.row)">
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,19 +106,13 @@
       };
     },
     mounted() {
-      this.getUser();
+      this.getUser(this.current, this.size);
     },
     methods: {
-      // 刷新
-      // refresh() {
-      //   this.reload();
-      // },
-
       // 获取用户
-      getUser() {
+      getUser(cur, list) {
         let self = this;
-        API.users(self.current, self.size).then(res => {
-          console.log(res);
+        API.users(cur, list).then(res => {
           self.loading = false;
           self.tableData = res.data;
           self.total = res.total;
@@ -130,27 +125,14 @@
         let self = this;
         self.loading = true;
         self.current = val;
-        API.users(val, self.size).then(res => {
-          console.log(res);
-          self.loading = false;
-          self.tableData = res.data;
-          self.total = res.total;
-        }).catch(err => {
-          self.loading = false;
-        })
+        self.getUser(val, self.size);
       },
       sizeChange(val) {
         let self = this;
         self.loading = true;
         self.size = val;
-        API.users(self.current, val).then(res => {
-          console.log(res);
-          self.loading = false;
-          self.tableData = res.data;
-          self.total = res.total;
-        }).catch(err => {
-          self.loading = false;
-        })
+        self.getUser(1, val);
+        self.current = 1;
       },
 
       // 添加用户
@@ -176,7 +158,7 @@
         API.DelUsers(self.id).then(res => {
           self.dialogDel = false;
           self.$message.success("删除成功");
-          self.getUser();
+          self.getUser(self.current, self.size);
         })
       },
 

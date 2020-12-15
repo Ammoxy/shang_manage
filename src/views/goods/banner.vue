@@ -248,7 +248,7 @@
                     is_show: row.is_show
                 }
 
-                let urlStr = self.form.img.split(","); 
+                let urlStr = self.form.img.split(",");
                 urlStr.forEach(item => {
                     let obj = new Object();
                     obj.url = item;
