@@ -87,14 +87,14 @@
             };
         },
         mounted() {
-            this.getOrder();
+            this.getOrder(this.current, this.size);
             this.getGoods();
             this.getMerchant();
         },
         methods: {
-            getOrder() {
+            getOrder(cur, list, merchant_id, goods_id) {
                 let self = this;
-                API.orders(self.current, self.size).then(res => {
+                API.orders(cur, list, merchant_id, goods_id).then(res => {
                     self.loading = false;
                     self.tableData = res.data;
                     self.total = res.total;
@@ -107,81 +107,47 @@
                 self.current = val;
                 self.loading = true;
                 if (self.merchant_id && self.goods_id) {
-                    API.orders(val, self.size, self.merchant_id, self.goods_id).then(res => {
-                        self.loading = false;
-                        self.tableData = res.data;
-                        self.total = res.total;
-                    }).catch(err => {
-                        self.loading = false;
-                    })
+                    self.getOrder(val, self.size, self.merchant_id, self.goods_id);
                 } else {
-                    API.orders(val, self.size).then(res => {
-                        self.loading = false;
-                        self.tableData = res.data;
-                        self.total = res.total;
-                    }).catch(err => {
-                        self.loading = false;
-                    })
+                    self.getOrder(val, self.size);
                 }
             },
             sizeChange(val) {
                 let self = this;
                 self.size = val;
+                self.current = 1;
                 self.loading = true;
                 if (self.merchant_id && self.goods_id) {
-                    API.orders(self.current, val, self.merchant_id, self.goods_id).then(res => {
-                        // console.log(res);
-                        self.loading = false;
-                        self.tableData = res.data;
-                        self.total = res.total;
-                    }).catch(err => {
-                        self.loading = false;
-                    })
+                    self.getOrder(1, val, self.merchant_id, self.goods_id);
                 } else {
-                    API.orders(self.current, val).then(res => {
-                        self.loading = false;
-                        self.tableData = res.data;
-                        self.total = res.total;
-                    }).catch(err => {
-                        self.loading = false;
-                    })
+                    self.getOrder(1, val);
                 }
             },
             getGoods() {
                 var self = this;
                 API.goods(1, 100).then(res => {
-                    // console.log(res.data);
                     self.commodityList = res.data;
                 })
             },
             getMerchant() {
                 var self = this;
                 API.merchants(1, 100).then(res => {
-                    // console.log(res.data);
                     self.merchantList = res.data;
                 })
             },
             changeMerchant(val) {
                 var self = this;
-                // console.log(val);
                 self.merchant_id = val;
             },
             changeCommodity(val) {
                 var self = this;
-                // console.log(val);
                 self.goods_id = val;
             },
             search() {
                 var self = this;
                 self.loading = true;
-                API.orders(self.current, self.size, self.merchant_id, self.goods_id).then(res => {
-                    // console.log(res);
-                    self.loading = false;
-                    self.tableData = res.data;
-                    self.total = res.total;
-                }).catch(err => {
-                    self.loading = false;
-                })
+                self.current = 1;
+                self.getOrder(self.current, self.size, self.merchant_id, self.goods_id);
             },
 
         },

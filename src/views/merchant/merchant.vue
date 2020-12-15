@@ -184,13 +184,13 @@
       };
     },
     mounted() {
-      this.getList()
+      this.getList(this.current, this.size)
     },
     methods: {
       // 表格数据
-      getList() {
+      getList(cur, list, name) {
         var self = this;
-        API.merchants(self.current, self.size).then(res => {
+        API.merchants(cur, list, name).then(res => {
           self.loading = false;
           self.tableData = res.data;
           self.total = res.total;
@@ -200,13 +200,9 @@
       },
       search() {
         var self = this;
-        API.merchants(self.current, self.size, self.name).then((res) => {
-          self.loading = false;
-          self.tableData = res.data;
-          self.total = res.total;
-        }).catch(err => {
-          self.loading = false;
-        })
+        self.current = 1;
+        self.loading = true;
+        self.getList(self.current, self.size, self.name);
       },
       // 分页
       currentChange(val) {
@@ -214,44 +210,21 @@
         self.current = val;
         self.loading = true;
         if (self.name) {
-          API.merchants(val, self.size, self.name).then((res) => {
-            self.loading = false;
-            self.tableData = res.data;
-            self.total = res.total;
-          }).catch(err => {
-            self.loading = false;
-          })
+          self.getList(val, self.size, self.name);
         } else {
-          API.merchants(val, self.size).then(res => {
-            self.loading = false;
-            self.tableData = res.data;
-            self.total = res.total;
-          }).catch(err => {
-            self.loading = false;
-          })
+          self.getList(val, self.size);
         }
       },
       // 每页几条
       sizeChange(val) {
         var self = this;
         self.size = val;
+        self.current = 1;
         self.loading = true;
         if (self.name) {
-          API.merchants(self.current, val, self.name).then((res) => {
-            self.loading = false;
-            self.tableData = res.data;
-            self.total = res.total;
-          }).catch(err => {
-            self.loading = false;
-          })
+          self.getList(1, val, self.name);
         } else {
-          API.merchants(self.current, val).then(res => {
-            self.loading = false;
-            self.tableData = res.data;
-            self.total = res.total;
-          }).catch(err => {
-            self.loading = false;
-          })
+          self.getList(1, val);
         }
       },
 
@@ -285,7 +258,7 @@
             imgs: [],
             id: ''
           };
-          self.getList();
+          self.getList(self.current, self.size);
         })
       },
 
@@ -386,7 +359,7 @@
         API.DelMerchant(self.id).then(res => {
           self.$message.success("删除成功");
           self.dialogDel = false;
-          self.getList();
+          self.getList(self.current, self.size);
         })
       },
       handleDetail(index, row) {
