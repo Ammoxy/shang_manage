@@ -239,7 +239,7 @@
             handleEdit(index, row) {
                 var self = this;
                 self.dialogBanner = true;
-                console.log(row);
+                // console.log(row);
                 self.form = {
                     img: row.img,
                     id: row.id,
